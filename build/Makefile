@@ -52,11 +52,17 @@ install: twitch-cli
 	@mkdir -p ${DESTDIR}${MANPREFIX}/man1
 	@sed "s/VERSION/${VERSION}/g" < ../twitch-cli.1 > ${DESTDIR}${MANPREFIX}/man1/twitch-cli.1
 	@chmod 644 ${DESTDIR}${MANPREFIX}/man1/twitch-cli.1
+	@echo installing conf files to /home/${SUDO_USER}/${CONFPREFIX}
+	@mkdir -p /home/${SUDO_USER}/${CONFPREFIX}/twitch-cli
+	@touch /home/${SUDO_USER}/${CONFPREFIX}/twitch-cli/streamers.txt
+	@chown -R ${SUDO_USER}:${SUDO_USER} /home/${SUDO_USER}/${CONFPREFIX}/twitch-cli
 
 uninstall:
 	@echo removing executable file from ${DESTDIR}${PREFIX}/bin
 	@rm -f ${DESTDIR}${PREFIX}/bin/twitch-cli
 	@echo removing manual page from ${DESTDIR}${MANPREFIX}
 	@rm -f ${DESTDIR}${MANPREFIX}/man1/twitch-cli.1
+	@echo removing conf files from /home/${SUDO_USER}/${CONFPREFIX}
+	@rm -fr /home/${SUDO_USER}/${CONFPREFIX}/twitch-cli
 
 .PHONY: all options clean dist install uninstall debug

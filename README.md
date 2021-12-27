@@ -3,7 +3,7 @@ TWITCH-CLI
 
 About
 -
-Twitch-cli is a cli lightweight cli to watch and manage twitch streamers.
+Twitch-cli is a lightweight cli to watch and manage twitch streamers.
 
 How To Use
 -

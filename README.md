@@ -19,7 +19,10 @@ Installation
 
 ```
 git clone https://gitlab.com/Paul-Chambaz/twitch-cli
-cd twitch-cli/build
+cd twitch-cli/include
+# add the streamers in this file
+$EDITOR config.h
+cd ../build
 sudo make clean install
 ```
 This project is only available on Linux. However, the only this that needs updating is the makefile, so you could compile it yourself and install the binary in the correct directories yourself.

@@ -8,29 +8,46 @@ Twitch-cli is a lightweight cli to watch and manage twitch streamers.
 How To Use
 -
 
-First, navigate to ~/.config/twitch-cli/streamers.txt.
-On this file, you can add streamers that you want to follow, navigate to https://www.twitch.tv and find your streamer. 
-The real name is in the url, but most of the time, it's the one you're thinking about. Be careful to only add one name per line and not to leave empty lines at the start or end.
+To add streamers to the program, you need to edit the config.h file located in the include folder.
+Here is an example:
 
-Then, simply run *twitch-cli* to get a list of you streamer activity. Select the one you want to watch and mpv will start. 
+```
+char *streamers[] = {
+  "streamer1",
+  "streamer2",
+  "streamer3"
+};
+```
+
+To get the correct name, got to [twitch](https://www.twitch.tv) and go to a streamer page.
+The correct name is in the url.
+
+Then, simply run **twitch-cli** to get a list of you streamer activity. Select the one you want to watch and mpv will start. 
 
 Installation
 -
 
+For twitch-cli to work, you need to install some dependencies before building.
+
+- curl
+- mpv
+- yt-dlp (and configure it to work with mpv)
+
 ```
-git clone https://gitlab.com/Paul-Chambaz/twitch-cli
+git clone https://git.chambaz.xyz/twitch-cli
 cd twitch-cli/include
 # add the streamers in this file
 $EDITOR config.h
 cd ../build
 sudo make clean install
 ```
+
 This project is only available on Linux. However, the only this that needs updating is the makefile, so you could compile it yourself and install the binary in the correct directories yourself.
 
 Dependencies
 -
 
-Twitch-cli has two dependencies: cURL to fetch streamer status info and mpv to play the stream.
+Twitch-cli has three dependencies: cURL to fetch streamer status info, mpv to play the stream and yt-dlp for mpv to get the stream.
 
 Licence
 -

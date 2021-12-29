@@ -6,11 +6,11 @@
 #include <sys/types.h>
 #include <curl/curl.h>
 #include <pwd.h>
+#include "config.h"
 
-#define MAX_STREAMERS 256
 #define MAX_ANSWER 256
 #define KW_LIVE "live_user"
-#define KW_EXIST "rel=\"alt"
+#define KW_EXIST "www.twitch.tv/"
 
 #define RESET "\033[0;0m"
 #define RED "\033[0;31m"
@@ -18,6 +18,7 @@
 #define GREY "\033[0;37m"
 #define BOLD "\033[1m"
 #define UNDER "\033[4m"
+
 
 static size_t WriteMemoryCallback (void *content, size_t size, size_t nmemb, void *userp);
 
@@ -27,40 +28,7 @@ struct MemoryStruct {
 };
 
 int main (int argc, char *argv[]) {
-  // get the home directory of the user to get to .config location and open streamers.txt
-  struct passwd *pw = getpwuid(getuid());
-  char *homePath = pw->pw_dir;
-  char *streamerPath = "/.config/twitch-cli/streamers.txt";
-  FILE *streamerFile = fopen(strcat(homePath, streamerPath), "r");
-  if (streamerFile == NULL) {
-    printf("Error, could not load file at ~%s.\n", streamerPath);
-    exit(EXIT_FAILURE);
-  }
-
-  // we do a quick check in case the config file is emptyy to help
-  fseek(streamerFile, 0, SEEK_END);
-  if (!ftell(streamerFile)) {
-    printf("You don't have any streamers on your config file. To add some, go to ~%s and add one streamer per line.\n", streamerPath);
-    exit(EXIT_SUCCESS);
-  }
-  fseek(streamerFile, 0, SEEK_SET);
-
-  // we read from the file and store all the streamers to get
-  // we also count the number of streamers
-  int count = 0;
-  char **streamers = (char **) malloc(sizeof(char *) * MAX_STREAMERS);
-  char *line = NULL;
-  size_t len = 0;
-  ssize_t read;
-  while ((read = getline(&line, &len, streamerFile)) != -1) {
-    streamers[count] = (char *) malloc(sizeof(char) * (read - 1));
-    strncpy(streamers[count], line, read - 1);
-    streamers[count][read - 1] = '\0';
-    count++;
-  }
-  fclose(streamerFile);
-  streamers = (char **) realloc(streamers, sizeof(char *) * count);
-
+  int count = sizeof(streamers) / sizeof(char *);
   // now that we have a list of all streamers, we use curl to get the html of the page
   // we will then search some special characters in the html to determine if the user is live
   char *status = (char *) malloc(sizeof(char) * count);
@@ -158,11 +126,6 @@ int main (int argc, char *argv[]) {
   out[strlen(start) + strlen(streamers[answer - 1]) + 1] = '\0';
   // then run the command
   system(out);
-  // and free what's to be freed
-  for (int i = 0; i != count; ++i) {
-    free(streamers[i]);
-  }
-  free(streamers);
   free(out);
 }
 

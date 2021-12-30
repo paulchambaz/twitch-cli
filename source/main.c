@@ -61,20 +61,20 @@ int main (int argc, char *argv[]) {
     //we finally perform the request and deal with the result
     res = curl_easy_perform(curl_handle);
     if (res != CURLE_OK) {
-      printf("Error, curl failed.");
-      free(chunk.memory);
-      exit(EXIT_FAILURE);
-    }
-    char *output = chunk.memory;
-    // we search in the html of the page for the pattern
-    if (strstr(output, KW_LIVE)) {
-      status[i] = 0;
-    } else if (strstr(output, KW_EXIST)) {
-      status[i] = 1;
-    } else {
       status[i] = 2;
+      free(chunk.memory);
+    } else {
+      char *output = chunk.memory;
+      // we search in the html of the page for the pattern
+      if (strstr(output, KW_LIVE)) {
+        status[i] = 0;
+      } else if (strstr(output, KW_EXIST)) {
+        status[i] = 1;
+      } else {
+        status[i] = 2;
+      }
+      free(chunk.memory);
     }
-    free(chunk.memory);
     chunk.memory = (char *) malloc(1);
     chunk.size = 0;
   }

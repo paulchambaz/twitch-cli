@@ -112,7 +112,7 @@ int main (int argc, char *argv[]) {
       exit(EXIT_SUCCESS);
     }
   } while (answer <= 0 || answer > count + 1 || status[answer - 1] != 0);
-  printf("Starting stream...");
+  printf("Starting stream...\n");
   // we construct the string for the command with mpv
   char *start = "mpv --force-seekable=yes --speed=1 --really-quiet \"https://www.twitch.tv/";
   char *out = (char *) malloc(sizeof(char) * (strlen(start) + strlen(streamers[answer - 1]) + 1));

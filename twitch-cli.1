@@ -8,20 +8,21 @@ twitch-cli is a lightweight cli to watch and manage twitch streamer.
 .PP
 To add streamers to the program, you need to edit the config.h file located in the include folder.
 Here is an example
+.PP
 char *streamers[] = {
   "streamer1",
   "streamer2",
   "streamer3"
 };
+.PP
 To get the correct name go to https://www.twitch.tv and go to a streamer url.
 The correct name is in the url.
-If you want to add more streamers, simply modify the config.h again and reinstall.
 .PP
 Then, simply run 
 .B twitch-cli 
 to get a list of you streamer activity. Select the one you want to watch and mpv will start. 
-.SH CONFIGURATION
-.TP
+.PP
+If you want to add more streamers, simply modify the config.h again and reinstall.
 .SH MORE INFORMATION
 Twitch-cli has three dependencies: cURL to fetch streamer status info, mpv to play the stream and yt-dlp for mpv to get thre stream.
 .SH AUTHORS

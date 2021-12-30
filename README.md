@@ -45,7 +45,8 @@ cd ../build
 sudo make clean install
 ```
 
-This project is only available on Linux. However, the only this that needs updating is the makefile, so you could compile it yourself and install the binary in the correct directories yourself.
+This project is only available on Linux.
+However, the only thing that needs updating is the makefile, so you could compile it yourself and install the binary in the correct directories yourself.
 
 Dependencies
 -

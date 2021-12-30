@@ -30,10 +30,11 @@ Installation
 -
 
 For twitch-cli to work, you need to install some dependencies before building.
+You can usually install them with your package manager.
 
-- curl
-- mpv
-- yt-dlp (and configure it to work with mpv)
+- [curl](https://github.com/curl/curl)
+- [mpv](https://github.com/mpv-player/mpv)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) ([and probably configure it to work with mpv](https://www.funkyspacemonkey.com/replace-youtube-dl-with-yt-dlp-how-to-make-mpv-work-with-yt-dlp))
 
 ```
 git clone https://git.chambaz.xyz/twitch-cli

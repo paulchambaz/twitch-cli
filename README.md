@@ -24,6 +24,8 @@ The correct name is in the url.
 
 Then, simply run **twitch-cli** to get a list of you streamer activity. Select the one you want to watch and mpv will start. 
 
+If you want to add more streamers, simply modify the config.h file again and reinstall.
+
 Installation
 -
 

@@ -43,9 +43,12 @@ int main (int argc, char *argv[]) {
           char *command = "notify-send \"";
           char *message = " is live\"";
           char notification[strlen(command) + strlen(streamers[i]) + strlen(message)]; 
+          // build notification
           strcpy(notification, command);
           strcat(notification, streamers[i]);
           strcat(notification, message);
+          // send it
+          system(notification);
         }
       }
       sleep(60);

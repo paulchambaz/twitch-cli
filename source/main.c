@@ -48,6 +48,7 @@ int main (int argc, char *argv[]) {
           strcat(notification, message);
         }
       }
+      sleep(60);
     }
   } else {
     // we print the result of the curl to the user

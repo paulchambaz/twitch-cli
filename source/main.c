@@ -39,7 +39,7 @@ int main (int argc, char *argv[]) {
       char *new_status = (char *) malloc(sizeof(char) * count);
       FetchStreamerData(count, streamers, new_status);
       for (int i = 0; i != count; ++i) {
-        if (status[i] != new_status[i]) {
+        if (status[i] != 0 &&  new_status[i] == 0) {
           char *command = "notify-send \"";
           char *message = " is live\"";
           char notification[strlen(command) + strlen(streamers[i]) + strlen(message)]; 

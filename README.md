@@ -27,7 +27,7 @@ Then, simply run **twitch-cli** to get a list of you streamer activity. Select t
 If you want to add more streamers, simply modify the config.h file again and reinstall.
 
 There is now support to run this application in the background. Just run **twitch-cli -d** and the program will run on loop, you can stop it with <Ctrl+c>.
-You can run this application in the background or even at startup, and the program will send a notification when a new streamer is live.
+You can run this application in the background or even at startup, and the program will send a notification when a new streamer is live (just run **twitch-cli -d & disown** in a terminal).
 If there is need for it, I will add masks to only get notified for some streamers.
 
 Installation

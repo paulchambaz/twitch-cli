@@ -22,9 +22,13 @@ char *streamers[] = {
 To get the correct name, got to [twitch](https://www.twitch.tv) and go to a streamer page.
 The correct name is in the url.
 
-Then, simply run **twitch-cli** to get a list of you streamer activity. Select the one you want to watch and mpv will start. 
+Then, simply run **twitch-cli** to get a list of you streamer activity. Select the one you want to watch and mpv will start.
 
 If you want to add more streamers, simply modify the config.h file again and reinstall.
+
+There is now support to run this application in the background. Just run **twitch-cli -d** and the program will run on loop, you can stop it with <Ctrl+c>.
+You can run this application in the background or even at startup, and the program will send a notification when a new streamer is live.
+If there is need for it, I will add masks to only get notified for some streamers.
 
 Installation
 -

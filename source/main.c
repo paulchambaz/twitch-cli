@@ -33,8 +33,14 @@ int main (int argc, char *argv[]) {
   // now that we have a list of all streamers, we use curl to get the html of the page
   // we will then search some special characters in the html to determine if the user is live
   char *status = (char *) malloc(sizeof(char) * count);
-  FetchStreamerData(count, streamers, status);
   if (argc == 2 && !strcmp(argv[1], "-d")) {
+    if (count == 0) {
+      printf("No streamers.");
+      return 0;
+    }
+    for (int i = 0; i != count; i++) {
+      status[i] = -1;
+    }
     while (1) {
       char *new_status = (char *) malloc(sizeof(char) * count);
       FetchStreamerData(count, streamers, new_status);
@@ -42,7 +48,7 @@ int main (int argc, char *argv[]) {
         if (status[i] != 0 &&  new_status[i] == 0) {
           char *command = "notify-send \"";
           char *message = " is live\"";
-          char notification[strlen(command) + strlen(streamers[i]) + strlen(message)]; 
+          char notification[strlen(command) + strlen(streamers[i]) + strlen(message)];
           // build notification
           strcpy(notification, command);
           strcat(notification, streamers[i]);
@@ -50,10 +56,12 @@ int main (int argc, char *argv[]) {
           // send it
           system(notification);
         }
+        status[i] = new_status[i];
       }
       sleep(60);
     }
   } else {
+    FetchStreamerData(count, streamers, status);
     // we print the result of the curl to the user
     printf("%sYour twitch channels : %s\n", BOLD, RESET);
     for (int i = 0; i != count; i++) {

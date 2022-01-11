@@ -21,6 +21,7 @@
 
 
 static size_t WriteMemoryCallback (void *content, size_t size, size_t nmemb, void *userp);
+void FetchStreamerData (int count, char *streamer[], char *status);
 
 struct MemoryStruct {
   char *memory;
@@ -32,6 +33,75 @@ int main (int argc, char *argv[]) {
   // now that we have a list of all streamers, we use curl to get the html of the page
   // we will then search some special characters in the html to determine if the user is live
   char *status = (char *) malloc(sizeof(char) * count);
+  FetchStreamerData(count, streamers, status);
+  if (argc == 2 && !strcmp(argv[1], "-d")) {
+    while (1) {
+      char *new_status = (char *) malloc(sizeof(char) * count);
+      FetchStreamerData(count, streamers, new_status);
+      for (int i = 0; i != count; ++i) {
+        if (status[i] != new_status[i]) {
+          char *command = "notify-send \"";
+          char *message = " is live\"";
+          char notification[strlen(command) + strlen(streamers[i]) + strlen(message)]; 
+          strcpy(notification, command);
+          strcat(notification, streamers[i]);
+          strcat(notification, message);
+        }
+      }
+    }
+  } else {
+    // we print the result of the curl to the user
+    printf("%sYour twitch channels : %s\n", BOLD, RESET);
+    for (int i = 0; i != count; i++) {
+      if (status[i] == 0) {
+        printf(" %d - %s : %slive%s\n", i + 1, streamers[i], GREEN, RESET);
+      } else if (status[i] == 1) {
+        printf(" %d - %s : %soffline%s\n", i + 1, streamers[i], GREY, RESET);
+      } else {
+        printf(" %d - %s : %serror%s\n", i + 1, streamers[i], RED, RESET);
+      }
+    }
+    printf(" %d - Exit\n", count + 1);
+    // we setup a response
+    int answer = -1;
+    char str_answer[MAX_ANSWER];
+    do {
+      // if the user has chosen an out of range option, or a streamer who is not live, we print an error.
+      if (answer != -1 && answer <= 0 || answer > count + 1 || status[answer - 1] != 0) {
+        printf("Error. ");
+      }
+      printf("What do you want to do (1-%s%d%s)? : ", UNDER, count + 1, RESET);
+      fgets(str_answer, MAX_ANSWER, stdin);
+      str_answer[strlen(str_answer) - 1] = '\0';
+      if (strlen(str_answer) == 0) {
+        // we autoexit if the user has chosen nothing (default exit)
+        exit(EXIT_SUCCESS);
+      }
+      answer = atoi(str_answer);
+      if (answer == count + 1) {
+        // we also exit if the user has chosen the exit option
+        exit(EXIT_SUCCESS);
+      }
+    } while (answer <= 0 || answer > count + 1 || status[answer - 1] != 0);
+    printf("Starting stream...\n");
+    // we construct the string for the command with mpv
+    char *start = "mpv --force-seekable=yes --speed=1 --really-quiet \"https://www.twitch.tv/";
+    char *out = (char *) malloc(sizeof(char) * (strlen(start) + strlen(streamers[answer - 1]) + 1));
+    for (int i = 0; i != strlen(start); ++i) {
+      out[i] = start[i];
+    }
+    for (int i = 0; i != strlen(streamers[answer - 1]); ++i) {
+      out[i + strlen(start)] = streamers[answer - 1][i];
+    }
+    out[strlen(start) + strlen(streamers[answer - 1])] = '"';
+    out[strlen(start) + strlen(streamers[answer - 1]) + 1] = '\0';
+    // then run the command
+    system(out);
+    free(out);
+  }
+}
+
+void FetchStreamerData (int count, char *streamer[], char *status) {
   CURL *curl_handle;
   CURLcode res;
   struct MemoryStruct chunk;
@@ -79,54 +149,6 @@ int main (int argc, char *argv[]) {
     chunk.size = 0;
   }
   free(chunk.memory);
-  // we print the result of the curl to the user
-  printf("%sYour twitch channels : %s\n", BOLD, RESET);
-  for (int i = 0; i != count; i++) {
-    if (status[i] == 0) {
-      printf(" %d - %s : %slive%s\n", i + 1, streamers[i], GREEN, RESET);
-    } else if (status[i] == 1) {
-      printf(" %d - %s : %soffline%s\n", i + 1, streamers[i], GREY, RESET);
-    } else {
-      printf(" %d - %s : %serror%s\n", i + 1, streamers[i], RED, RESET);
-    }
-  }
-  printf(" %d - Exit\n", count + 1);
-  // we setup a response
-  int answer = -1;
-  char str_answer[MAX_ANSWER];
-  do {
-    // if the user has chosen an out of range option, or a streamer who is not live, we print an error.
-    if (answer != -1 && answer <= 0 || answer > count + 1 || status[answer - 1] != 0) {
-      printf("Error. ");
-    }
-    printf("What do you want to do (1-%s%d%s)? : ", UNDER, count + 1, RESET);
-    fgets(str_answer, MAX_ANSWER, stdin);
-    str_answer[strlen(str_answer) - 1] = '\0';
-    if (strlen(str_answer) == 0) {
-      // we autoexit if the user has chosen nothing (default exit)
-      exit(EXIT_SUCCESS);
-    }
-    answer = atoi(str_answer);
-    if (answer == count + 1) {
-      // we also exit if the user has chosen the exit option
-      exit(EXIT_SUCCESS);
-    }
-  } while (answer <= 0 || answer > count + 1 || status[answer - 1] != 0);
-  printf("Starting stream...\n");
-  // we construct the string for the command with mpv
-  char *start = "mpv --force-seekable=yes --speed=1 --really-quiet \"https://www.twitch.tv/";
-  char *out = (char *) malloc(sizeof(char) * (strlen(start) + strlen(streamers[answer - 1]) + 1));
-  for (int i = 0; i != strlen(start); ++i) {
-    out[i] = start[i];
-  }
-  for (int i = 0; i != strlen(streamers[answer - 1]); ++i) {
-    out[i + strlen(start)] = streamers[answer - 1][i];
-  }
-  out[strlen(start) + strlen(streamers[answer - 1])] = '"';
-  out[strlen(start) + strlen(streamers[answer - 1]) + 1] = '\0';
-  // then run the command
-  system(out);
-  free(out);
 }
 
 /* this function returns the string content of a website to a memorystruct */

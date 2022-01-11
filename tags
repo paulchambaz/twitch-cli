@@ -15,9 +15,10 @@ ${OBJ}	build/Makefile	/^${OBJ}: ..\/include\/config.h config.mk$/;"	t
 AUTHORS	twitch-cli.1	/^.SH AUTHORS$/;"	s	title:twitch-cli
 About	README.md	/^About$/;"	s	chapter:TWITCH-CLI
 BOLD	source/main.c	/^#define BOLD /;"	d	file:
-CC	build/config.mk	/^CC ?= clang$/;"	m
+CC	build/config.mk	/^CC = clang$/;"	m
 DEBUG_CFLAGS	build/config.mk	/^DEBUG_CFLAGS = ${CFLAGS} -UNDEBUG -O0 -g -ggdb -Wall -Wextra -Wno-unused-parameter$/;"	m
 Dependencies	README.md	/^Dependencies$/;"	s	chapter:TWITCH-CLI
+FetchStreamerData	source/main.c	/^void FetchStreamerData (int count, char *streamer[], char *status) {$/;"	f	typeref:typename:void
 GREEN	source/main.c	/^#define GREEN /;"	d	file:
 GREY	source/main.c	/^#define GREY /;"	d	file:
 HOW	twitch-cli.1	/^.SH HOW TO USE$/;"	s	title:twitch-cli

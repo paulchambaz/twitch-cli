@@ -68,6 +68,8 @@ int main (int argc, char *argv[]) {
     if (!status[0]) {
       printf("Starting stream...\n");
       StartStream(streamer[0]);
+    } else {
+      printf("Not available.\n");
     }
   } else {
     char *status = (char *) malloc(sizeof(char) * count);

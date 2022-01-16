@@ -22,6 +22,7 @@
 
 static size_t WriteMemoryCallback (void *content, size_t size, size_t nmemb, void *userp);
 void FetchStreamerData (int count, char *streamer[], char *status);
+void StartStream (char *streamer);
 
 struct MemoryStruct {
   char *memory;
@@ -32,8 +33,8 @@ int main (int argc, char *argv[]) {
   int count = sizeof(streamers) / sizeof(char *);
   // now that we have a list of all streamers, we use curl to get the html of the page
   // we will then search some special characters in the html to determine if the user is live
-  char *status = (char *) malloc(sizeof(char) * count);
   if (argc == 2 && !strcmp(argv[1], "-d")) {
+  char *status = (char *) malloc(sizeof(char) * count);
     if (count == 0) {
       printf("No streamers.");
       return 0;
@@ -60,7 +61,16 @@ int main (int argc, char *argv[]) {
       }
       sleep(60);
     }
+  } else if (argc == 2) {
+    char status[1];
+    char *streamer[] = { argv[1] };
+    FetchStreamerData(1, streamer, status);
+    if (!status[0]) {
+      printf("Starting stream...\n");
+      StartStream(streamer[0]);
+    }
   } else {
+    char *status = (char *) malloc(sizeof(char) * count);
     FetchStreamerData(count, streamers, status);
     // we print the result of the curl to the user
     printf("%sYour twitch channels : %s\n", BOLD, RESET);
@@ -96,21 +106,22 @@ int main (int argc, char *argv[]) {
       }
     } while (answer <= 0 || answer > count + 1 || status[answer - 1] != 0);
     printf("Starting stream...\n");
-    // we construct the string for the command with mpv
-    char *start = "mpv --force-seekable=yes --speed=1 --really-quiet \"https://www.twitch.tv/";
-    char *out = (char *) malloc(sizeof(char) * (strlen(start) + strlen(streamers[answer - 1]) + 1));
-    for (int i = 0; i != strlen(start); ++i) {
-      out[i] = start[i];
-    }
-    for (int i = 0; i != strlen(streamers[answer - 1]); ++i) {
-      out[i + strlen(start)] = streamers[answer - 1][i];
-    }
-    out[strlen(start) + strlen(streamers[answer - 1])] = '"';
-    out[strlen(start) + strlen(streamers[answer - 1]) + 1] = '\0';
-    // then run the command
-    system(out);
-    free(out);
+    // starts the string through mpv
+    StartStream(streamers[answer - 1]);
   }
+}
+
+void StartStream (char *streamer) {
+  // we add the entire bash command to start the string
+  char *start = "mpv --force-seekable=yes --speed=1 --really-quiet \"https://www.twitch.tv/";
+  char out[strlen(start) + strlen(streamer) + 1];
+  // then we append to it the streamer url name
+  strcpy(out, start);
+  strcpy(out + strlen(start), streamer);
+  out[strlen(out)] = '"';
+  out[strlen(start) + strlen(streamer) + 1] = '\0';
+  // and run the command
+  system(out);
 }
 
 void FetchStreamerData (int count, char *streamer[], char *status) {
@@ -126,16 +137,10 @@ void FetchStreamerData (int count, char *streamer[], char *status) {
     curl_handle = curl_easy_init();
     curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
     // we build the url of the curl request manually
-    char *url = (char *) malloc(sizeof(char) * (strlen(address) + strlen(streamers[i])));
-    for (int j = 0; j != strlen(address); ++j) {
-      url[j] = address[j];
-    }
-    for (int j = 0; j != strlen(streamers[i]); ++j) {
-      url[j + strlen(address)] = streamers[i][j];
-    }
-    url[strlen(address) + strlen(streamers[i])] = '\0';
+    char url[strlen(address) + strlen(streamer[i])];
+    strcpy(url, address);
+    strcpy(url + strlen(address), streamer[i]);
     curl_easy_setopt(curl_handle, CURLOPT_URL, url);
-    free(url);
     // we throw a call to WriteMemoryCallback, the function is defined below
     // it will then be stored on our chunk structure
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);

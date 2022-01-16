@@ -8,7 +8,12 @@ Twitch-cli is a lightweight cli to watch and manage twitch streamers.
 How To Use
 -
 
-To add streamers to the program, you need to edit the config.h file located in the include folder.
+To run this program, simply run **twitch-cli streamer** and the streamers stream will start.
+
+To get the correct name, got to [twitch](https://www.twitch.tv) and go to a streamer page.
+The correct name is in the url.
+
+If you want to add streamer, and get update status as to when they are live, you need to edit *config.h*.
 Here is an example:
 
 ```
@@ -19,16 +24,12 @@ char *streamers[] = {
 };
 ```
 
-To get the correct name, got to [twitch](https://www.twitch.tv) and go to a streamer page.
-The correct name is in the url.
-
 Then, simply run **twitch-cli** to get a list of you streamer activity. Select the one you want to watch and mpv will start.
 
 If you want to add more streamers, simply modify the config.h file again and reinstall.
 
-There is now support to run this application in the background. Just run **twitch-cli -d** and the program will run on loop, you can stop it with <Ctrl+c>.
-You can run this application in the background or even at startup, and the program will send a notification when a new streamer is live (just run **twitch-cli -d & disown** in a terminal).
-If there is need for it, I will add masks to only get notified for some streamers.
+You can also run this application in the background and get notifications when a streamer is live.
+Run **twitch-cli -d**, and the program will run until you stop it. You can then put it as a deamon in your init system, start it in your .xprofile, or just **twitch-cli -d & disown**.
 
 Installation
 -

@@ -28,6 +28,8 @@ Then, simply run **twitch-cli** to get a list of you streamer activity. Select t
 
 If you want to add more streamers, simply modify the config.h file again and reinstall.
 
+You can also **twitch-cli -p** tp print the list of connected streamers to stdout.
+
 You can also run this application in the background and get notifications when a streamer is live.
 Run **twitch-cli -d**, and the program will run until you stop it. You can then put it as a deamon in your init system, start it in your .xprofile, or just **twitch-cli -d & disown**.
 

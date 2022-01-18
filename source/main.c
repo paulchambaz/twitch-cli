@@ -61,6 +61,13 @@ int main (int argc, char *argv[]) {
       }
       sleep(60);
     }
+  } else if (argc == 2 && !strcmp(argv[1], "-p")) {
+    char *status = (char *) malloc(sizeof(char) * count);
+    FetchStreamerData(count, streamers, status);
+    for (int i = 0; i != count; ++i) {
+      if (status[i] == 0)
+        printf("%s\n", streamers[i]);
+    }
   } else if (argc == 2) {
     char status[1];
     char *streamer[] = { argv[1] };

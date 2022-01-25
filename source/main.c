@@ -122,15 +122,15 @@ int main (int argc, char *argv[]) {
 
 void StartStream (char *streamer) {
   // we add the entire bash command to start the string
-  char *start = "mpv --force-seekable=yes --speed=1 --really-quiet \"https://www.twitch.tv/";
-  char out[strlen(start) + strlen(streamer) + 1];
+  char *mpvstr = "mpv --force-seekable=yes --speed=1 --really-quiet \"https://www.twitch.tv/";
+  char mpvcmd[strlen(mpvstr) + strlen(streamer) + 1];
   // then we append to it the streamer url name
-  strcpy(out, start);
-  strcpy(out + strlen(start), streamer);
-  out[strlen(out)] = '"';
-  out[strlen(start) + strlen(streamer) + 1] = '\0';
+  strcpy(mpvcmd, mpvstr);
+  strcat(mpvcmd, streamer);
+  strcat(mpvcmd, "\"");
+  mpvcmd[strlen(mpvstr) + strlen(streamer) + 1] = '\0';
   // and run the command
-  system(out);
+  system(mpvcmd);
 }
 
 void FetchStreamerData (int count, char *streamer[], char *status) {

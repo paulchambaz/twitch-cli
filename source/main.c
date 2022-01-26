@@ -131,6 +131,9 @@ void StartStream (char *streamer) {
   mpvcmd[strlen(mpvstr) + strlen(streamer) + 1] = '\0';
   // and run the command
   system(mpvcmd);
+  // this part is quite expandable you can start new system commands from here
+  // just append a & at then end of the previous command and adjust the size of the array
+  // then you can copy the code above and adjust it to start commands like chatterino or other programs that use the streamer name
 }
 
 void FetchStreamerData (int count, char *streamer[], char *status) {

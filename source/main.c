@@ -122,7 +122,7 @@ int main (int argc, char *argv[]) {
 
 void StartStream (char *streamer) {
   // we add the entire bash command to start the string
-  char *mpvstr = "mpv --force-seekable=yes --speed=1 --really-quiet \"https://www.twitch.tv/";
+  char *mpvstr = "mpv --force-seekable=yes --speed=1 --really-quiet --profile=low-latency \"https://www.twitch.tv/";
   char mpvcmd[strlen(mpvstr) + strlen(streamer) + 1];
   // then we append to it the streamer url name
   strcpy(mpvcmd, mpvstr);

@@ -35,7 +35,7 @@ You can usually install them with your package manager.
 - [curl](https://github.com/curl/curl)
 - [mpv](https://github.com/mpv-player/mpv)
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) ([and probably configure it to work with mpv](https://www.funkyspacemonkey.com/replace-youtube-dl-with-yt-dlp-how-to-make-mpv-work-with-yt-dlp))
-- [dmenu](https://tools.suckless.org/dmenu/)(optional - useful to combine the commands)
+- [dmenu](https://tools.suckless.org/dmenu/) (optional - useful to combine the commands)
 
 ```
 git clone https://gitlab.com/Paul-Chambaz/twitch-cli

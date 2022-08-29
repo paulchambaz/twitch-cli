@@ -3,33 +3,70 @@
 twitch-cli is a lightweight cli to watch and manage twitch streamer.
 .SH SYNOPSIS
 .B twitch-cli
+[args]
+.br
+List of arguments:
+.TP
+.B -h
+Prints a help message.
+.TP
+.B -l
+Prints a list of all live streamers.
+.TP
+.B -d
+Starts a daemon that notify when a streamer goes live.
+.TP
+.B <streamer>
+Start the stream of <streamer>.
+.TP
+.B -v
+Prints verbose output.
 .SH HOW TO USE
-.B twitch-cli
 .PP
-To add streamers to the program, you need to edit the config.h file located in the include folder.
-Here is an example
+To add streamers to the program, you need to edit the twitchrc file located at
+.B ~/.config/twitchrc
 .PP
-char *streamers[] = {
-  "streamer1",
-  "streamer2",
-  "streamer3"
-};
+For example:
+.br
+  streamer1
+.br
+  streamer2
+.br
+  streamer3
 .PP
-To get the correct name go to https://www.twitch.tv and go to a streamer url.
-The correct name is in the url.
+To get the correct name go to https://www.twitch.tv/<streamer> and go to a streamer url.
+The correct name is in the <streamer> part of the url.
 .PP
 Then, simply run 
-.B twitch-cli 
-to get a list of you streamer activity. Select the one you want to watch and mpv will start. 
+.B twitch-cli -l
+to get a list of all streamer that are live.
 .PP
-If you want to add more streamers, simply modify the config.h again and reinstall.
+Finally, run
+.B twitch-cli <streamer>
+to start the stream.
+.PP
+Note that these two commands can be easily used together:
+.br
+.B twitch-cli $(twitch-cli -l | dmenu)
+works without issues.
+.PP
+You can also run
+.B twitch-cli -d
+to start a daemon, it will send a notification every time a streamer goes live.
+.br
+For daemons it is recommended to run
+.B twitch-cli -d & disown
+or even better create a init file (systemd, runit, openrc).
+.PP
+If you want to add more streamers, simply modify the twitchrc file again.
 .SH MORE INFORMATION
-Twitch-cli has three dependencies: cURL to fetch streamer status info, mpv to play the stream and yt-dlp for mpv to get thre stream.
+Twitch-cli has three dependencies: cURL to fetch streamer status info, mpv to play the stream and yt-dlp for mpv to get thre stream, i also recommend using dmenu with it.
 .SH AUTHORS
-Written by Paul Chambaz <paul.chambazz@gmail.com> in 2021.
+Written by Paul Chambaz <paul.chambazz@gmail.com> in 2021-2022.
 .SH LICENSE
 GPLv2
 .SH SEE ALSO
 .BR curl (1),
 .BR mpv (1),
-.BR yt-dlp (1)
+.BR yt-dlp (1),
+.BR dmenu (1)

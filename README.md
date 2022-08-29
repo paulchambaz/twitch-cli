@@ -15,8 +15,8 @@ streamer2
 streamer3
 ```
 
-To find what url to add to the file, go to **https://twitch.tv/&lt;streamer>**.
-The name to add is the &lt;streamer> part of the url.
+To find what url to add to the file, go to **https://twitch.tv/streamer**.
+The name to add is the streamer part of the url.
 
 Then run **twitch-cli -l** to get a list of all streamers that are live.
 

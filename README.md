@@ -20,7 +20,7 @@ The name to add is the <streamer> part of the url.
 
 Then run **twitch-cli -l** to get a list of all streamers that are live.
 
-You can then run **twitch-cli <streamer>** to start their stream.
+You can then run **twitch-cli <<streamer>>** to start their stream.
 
 Note that you can use these commands together - run **twitch-cli $(twitch-cli -l)** will use dmenu to prompt the user on which live streamer they want to watch.
 

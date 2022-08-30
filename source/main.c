@@ -193,27 +193,8 @@ list_mode ( bool verbose )
 
   for (int i = 0; i < number_streamers; i++) {
     // prints the list of all live streamers
-    // if (statuses[i] == STATUS_LIVE)
-    //   printf("%s\n", streamers[i]);
-    printf("%s: ", streamers[i]);
-    switch (statuses[i]) {
-      case STATUS_LIVE:
-        printf("live");
-        break;
-      case STATUS_OFFLINE:
-        printf("offline");
-        break;
-      case STATUS_ERROR:
-        printf("error");
-        break;
-      case STATUS_NULL:
-        printf("null");
-        break;
-      default:
-        printf("?");
-        break;
-    }
-    printf("\n");
+    if (statuses[i] == STATUS_LIVE)
+      printf("%s\n", streamers[i]);
   }
 
   free(streamers);

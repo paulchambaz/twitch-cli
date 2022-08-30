@@ -17,6 +17,10 @@
 #include <curl/curl.h>
 #include <pthread.h>
 
+#define MIN(x, y) (x < y) ? x : y
+
+#define MAX_NUMBER_THREAD 64
+
 /*
  * @breif Simple enum used to get the status codes from twitch
  */
@@ -189,8 +193,27 @@ list_mode ( bool verbose )
 
   for (int i = 0; i < number_streamers; i++) {
     // prints the list of all live streamers
-    if (statuses[i] == STATUS_LIVE)
-      printf("%s\n", streamers[i]);
+    // if (statuses[i] == STATUS_LIVE)
+    //   printf("%s\n", streamers[i]);
+    printf("%s: ", streamers[i]);
+    switch (statuses[i]) {
+      case STATUS_LIVE:
+        printf("live");
+        break;
+      case STATUS_OFFLINE:
+        printf("offline");
+        break;
+      case STATUS_ERROR:
+        printf("error");
+        break;
+      case STATUS_NULL:
+        printf("null");
+        break;
+      default:
+        printf("?");
+        break;
+    }
+    printf("\n");
   }
 
   free(streamers);
@@ -411,17 +434,22 @@ fetch_streamer_data ( size_t count, char **streamer, twitch_status **status, boo
   }
   pthread_t thread[count];
   thread_fetch_data fetch_data[count];
-  for (int i = 0; i < count; i++) {
-    fetch_data[i].streamer = streamer[i];
-    fetch_data[i].status = &(*status)[i];
-    pthread_create(&thread[i], NULL, fetch_thread, (void *) &fetch_data[i]);
-    if (verbose)
-      printf("Started thread for %s.\n", streamer[i]);
-  }
-  for (int i = 0; i < count; i++) {
-    pthread_join(thread[i], NULL);
-    if (verbose)
-      printf("Ended thread for %s.\n", streamer[i]);
+  int current_thread = 0;
+  while (current_thread < count) {
+    int max = MIN(count, current_thread + MAX_NUMBER_THREAD);
+    for (int i = current_thread; i < max; i++) {
+      fetch_data[i].streamer = streamer[i];
+      fetch_data[i].status = &(*status)[i];
+      pthread_create(&thread[i], NULL, fetch_thread, (void *) &fetch_data[i]);
+      if (verbose)
+        printf("Started thread for %s.\n", streamer[i]);
+    }
+    for (int i = current_thread; i < max; i++) {
+      pthread_join(thread[i], NULL);
+      if (verbose)
+        printf("Ended thread for %s.\n", streamer[i]);
+    }
+    current_thread += MAX_NUMBER_THREAD;
   }
 }
 

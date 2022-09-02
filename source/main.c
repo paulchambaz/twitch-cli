@@ -24,28 +24,28 @@
 /*
  * @breif Simple enum used to get the status codes from twitch
  */
-typedef enum {
+enum twitch_status {
   STATUS_LIVE,
   STATUS_OFFLINE,
   STATUS_ERROR,
   STATUS_NULL,
-} twitch_status;
+};
 
 /*
  * @brief Simple struct used to store the result of the curl request in memory
  */
-typedef struct {
+struct curl_data {
   char *content;
   size_t size;
-} curl_data;
+};
 
 /*
  * @brief Used to send and recieve data to the threads
  */
-typedef struct {
+struct thread_fetch_data {
   char *streamer;
-  twitch_status *status;
-} thread_fetch_data;
+  enum twitch_status *status;
+};
 
 void help_mode ( void );
 void daemon_mode ( bool verbose );
@@ -57,7 +57,7 @@ void copy_file_content ( FILE *file, char **str, size_t *len );
 void copy_to_line ( char *str, size_t len, char ***lines, size_t *number_lines );
 
 void start_stream ( char *streamer );
-void fetch_streamer_data ( size_t count, char **streamer, twitch_status **status, bool verbose );
+void fetch_streamer_data ( size_t count, char **streamer, enum twitch_status **status, bool verbose );
 void *fetch_thread ( void *pargs );
 static size_t write_memory_callback (void *content, size_t size, size_t nmemb, void *user_pointer);
 
@@ -81,8 +81,6 @@ main ( int argc, char *argv[] )
     daemon_mode(verbose);
   } else if (argc == 2) {
     start_mode(argv[1]);
-  } else {
-    help_mode();
   }
 }
 
@@ -109,7 +107,7 @@ daemon_mode ( bool verbose )
 {
   char **streamers;
   size_t number_streamers;
-  twitch_status *prev_statuses;
+  enum twitch_status *prev_statuses;
 
   // constructs the file path of the list of streamers
   if (verbose)
@@ -124,7 +122,7 @@ daemon_mode ( bool verbose )
   load_streamers(path, &streamers, &number_streamers);
 
   // sets up the statuses - this daemon registers change between statuses
-  prev_statuses = (twitch_status *) malloc(sizeof(twitch_status) * number_streamers);
+  prev_statuses = (enum twitch_status *) malloc(sizeof(enum twitch_status) * number_streamers);
   if (!prev_statuses)
     exit_error("Error, not enough memory.");
   for (int i = 0; i < number_streamers; i++) {
@@ -137,7 +135,7 @@ daemon_mode ( bool verbose )
     // fetches the current statuses
     if (verbose)
       printf("Fetching streamer status\n");
-    twitch_status *new_statuses;
+    enum twitch_status *new_statuses;
     fetch_streamer_data(number_streamers, streamers, &new_statuses, verbose);
 
     for (int i = 0; i < number_streamers; i++) {
@@ -172,7 +170,7 @@ list_mode ( bool verbose )
 {
   char **streamers;
   size_t number_streamers;
-  twitch_status *statuses;
+  enum twitch_status *statuses;
 
   // constructs the file path of the list of streamers
   if (verbose)
@@ -350,7 +348,7 @@ static size_t
 write_memory_callback (void *content, size_t size, size_t nmemb, void *user_pointer)
 {
    size_t real_size = size * nmemb;
-   curl_data *memory = (curl_data *) user_pointer;
+   struct curl_data *memory = (struct curl_data *) user_pointer;
    char *ptr = (char *) realloc(memory->content, memory->size + real_size + 1);
    if (!ptr) {
      exit_error("Error, not enough memory.");
@@ -369,10 +367,10 @@ write_memory_callback (void *content, size_t size, size_t nmemb, void *user_poin
 void *
 fetch_thread ( void *pargs )
 {
-  thread_fetch_data *fetch_data = (thread_fetch_data *) pargs;
+  struct thread_fetch_data *fetch_data = (struct thread_fetch_data *) pargs;
   CURL *curl_handle;
   CURLcode res;
-  curl_data data;
+  struct curl_data data;
   curl_global_init(CURL_GLOBAL_ALL);
   curl_handle = curl_easy_init();
   curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
@@ -407,14 +405,14 @@ fetch_thread ( void *pargs )
  * @parma status Address of the list of status to return
  */
 void
-fetch_streamer_data ( size_t count, char **streamer, twitch_status **status, bool verbose )
+fetch_streamer_data ( size_t count, char **streamer, enum twitch_status **status, bool verbose )
 {
-  *status = (twitch_status *) malloc(sizeof(twitch_status) * count);
+  *status = (enum twitch_status *) malloc(sizeof(enum twitch_status) * count);
   if (!*status) {
     exit_error("Error, not enough memory.");
   }
   pthread_t thread[count];
-  thread_fetch_data fetch_data[count];
+  struct thread_fetch_data fetch_data[count];
   int current_thread = 0;
   while (current_thread < count) {
     int max = MIN(count, current_thread + MAX_NUMBER_THREAD);

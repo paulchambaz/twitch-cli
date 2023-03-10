@@ -1,4 +1,4 @@
-/*
+/**
  * @file main.c
  * @author Paul Chambaz
  * @date 29 Aug 2022
@@ -20,6 +20,8 @@
 #define MIN(x, y) (x < y) ? x : y
 
 #define MAX_NUMBER_THREAD 64
+
+#define STREAM_COMMAND 
 
 /*
  * @breif Simple enum used to get the status codes from twitch
@@ -140,7 +142,7 @@ daemon_mode ( bool verbose )
 
     for (int i = 0; i < number_streamers; i++) {
       // registers a streamer going live
-      if (prev_statuses[i] != STATUS_LIVE && new_statuses[i] == STATUS_LIVE) {
+      if (prev_statuses[i] == STATUS_OFFLINE && new_statuses[i] == STATUS_LIVE) {
         // creates the notification command
         char notification_cmd[256];
         snprintf(notification_cmd, 255, "notify-send \"%s is live\"", streamers[i]);
@@ -332,8 +334,9 @@ copy_to_line ( char *str, size_t len, char ***lines, size_t *number_lines )
 void
 start_stream ( char *streamer )
 {
+  const char *twitch_cmd = "mpv --force-seekable=yes --speed=1 --profile=low-latency --no-cache \"https://www.twitch.tv/%s\" & disown ; chatterino -c %s";
   char mpv[256];
-  snprintf(mpv, 255, "mpv --force-seekable=yes --speed=1 --really-quiet --profile=low-latency \"https://www.twitch.tv/%s\"", streamer);
+  snprintf(mpv, 255, twitch_cmd, streamer, streamer);
   system(mpv);
 }
 
